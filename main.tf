@@ -134,7 +134,7 @@ resource "azurerm_virtual_machine" "myVM" {
   }
 
   storage_os_disk {
-    name              = "${local.virtual_machine_name}-disk1"
+    name              = "${azurerm_virtual_machine.myVM.myVM}-disk1"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
