@@ -118,13 +118,14 @@ resource "azurerm_storage_account" "mystorageaccount" {
 }
 
 # Create virtual machine
-resource "azurerm_virtual_machine" "VM" {
-  name                          = "vm"
+resource "azurerm_virtual_machine" "myVM" {
+  name                          = "acctvm"
   location                      = "westeurope"
   resource_group_name           = "${azurerm_resource_group.myterraformgroup.name}"
   network_interface_ids         = "${azurerm_network_interface.myterraformnic.id}"
   vm_size                       = "Standard_F2"
   delete_os_disk_on_termination = true
+  local
 
   storage_image_reference {
     publisher = "MicrosoftWindowsServer"
