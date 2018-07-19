@@ -118,11 +118,11 @@ resource "azurerm_storage_account" "mystorageaccount" {
 }
 
 # Create virtual machine
-resource "azurerm_virtual_machine" "domain-controller" {
-  name                          = "${local.virtual_machine_name}"
-  location                      = "${var.location}"
-  resource_group_name           = "${var.resource_group_name}"
-  network_interface_ids         = ["${azurerm_network_interface.primary.id}"]
+resource "azurerm_virtual_machine" "VM" {
+  name                          = "vm"
+  location                      = "westeurope"
+  resource_group_name           = "${azurerm_resource_group.myterraformgroup.name}"
+  network_interface_ids         = "${azurerm_resource_group.myterraformnic.id}"
   vm_size                       = "Standard_F2"
   delete_os_disk_on_termination = true
 
