@@ -122,7 +122,7 @@ resource "azurerm_virtual_machine" "myVM" {
   name                          = "acctvm"
   location                      = "westeurope"
   resource_group_name           = "${azurerm_resource_group.myterraformgroup.name}"
-  network_interface_ids         = "${azurerm_network_interface.myterraformnic.id}"
+  network_interface_ids         = "${azurerm_network_interface.myterraformnic.network_interface_ids}"
   vm_size                       = "Standard_F2"
   delete_os_disk_on_termination = true
 
