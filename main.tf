@@ -1,5 +1,5 @@
 variable "resourcename" {
-  default = "myResourceGroup"
+  default = "Bart-Terrafrom-Test"
 }
 
 # Configure the Microsoft Azure Provider
@@ -118,46 +118,52 @@ resource "azurerm_storage_account" "mystorageaccount" {
 }
 
 # Create virtual machine
-resource "azurerm_virtual_machine" "myterraformvm" {
-    name                  = "myVM"
-    location              = "westeurope"
-    resource_group_name   = "${azurerm_resource_group.myterraformgroup.name}"
-    network_interface_ids = ["${azurerm_network_interface.myterraformnic.id}"]
-    vm_size               = "Standard_DS1_v2"
+resource "azurerm_virtual_machine" "domain-controller" {
+  name                          = "${local.virtual_machine_name}"
+  location                      = "${var.location}"
+  resource_group_name           = "${var.resource_group_name}"
+  network_interface_ids         = ["${azurerm_network_interface.primary.id}"]
+  vm_size                       = "Standard_F2"
+  delete_os_disk_on_termination = true
 
-    storage_os_disk {
-        name              = "myOsDisk"
-        caching           = "ReadWrite"
-        create_option     = "FromImage"
-        managed_disk_type = "Premium_LRS"
-    }
+  storage_image_reference {
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServer"
+    sku       = "2016-Datacenter"
+    version   = "latest"
+  }
 
-    storage_image_reference {
-        publisher = "Canonical"
-        offer     = "UbuntuServer"
-        sku       = "16.04.0-LTS"
-        version   = "latest"
-    }
+  storage_os_disk {
+    name              = "${local.virtual_machine_name}-disk1"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Standard_LRS"
+  }
 
-    os_profile {
-        computer_name  = "myvm"
-        admin_username = "azureuser"
-    }
+  os_profile {
+    computer_name  = "myterraformvm"
+    admin_username = "azure"
+    admin_password = "azure@1234"
+    #custom_data    = "${local.custom_data_content}"
+  }
 
-    os_profile_linux_config {
-        disable_password_authentication = true
-        ssh_keys {
-            path     = "/home/azureuser/.ssh/authorized_keys"
-            key_data = "ssh-rsa AAAAB3Nz{snip}hwhqT9h"
-        }
-    }
+  os_profile_windows_config {
+    provision_vm_agent        = true
+    enable_automatic_upgrades = true
+  }
 
-    boot_diagnostics {
-        enabled = "true"
-        storage_uri = "${azurerm_storage_account.mystorageaccount.primary_blob_endpoint}"
-    }
+    # additional_unattend_config {
+    #   pass         = "oobeSystem"
+    #   component    = "Microsoft-Windows-Shell-Setup"
+    #   setting_name = "AutoLogon"
+    #   content      = "<AutoLogon><Password><Value>${var.admin_password}</Value></Password><Enabled>true</Enabled><LogonCount>1</LogonCount><Username>${var.admin_username}</Username></AutoLogon>"
+    # }
 
-    tags {
-        environment = "Terraform Demo"
-    }
-}
+    # # Unattend config is to enable basic auth in WinRM, required for the provisioner stage.
+    # additional_unattend_config {
+    #   pass         = "oobeSystem"
+    #   component    = "Microsoft-Windows-Shell-Setup"
+    #   setting_name = "FirstLogonCommands"
+    #   content      = "${file("${path.module}/files/FirstLogonCommands.xml")}"
+    # }
+  }
