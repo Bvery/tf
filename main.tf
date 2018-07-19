@@ -1,5 +1,5 @@
 variable "resourcename" {
-  default = "Bart-Terrafrom-Test"
+  default = "Terrafrom-Test"
 }
 
 # Configure the Microsoft Azure Provider
