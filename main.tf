@@ -125,7 +125,6 @@ resource "azurerm_virtual_machine" "myVM" {
   network_interface_ids         = "${azurerm_network_interface.myterraformnic.id}"
   vm_size                       = "Standard_F2"
   delete_os_disk_on_termination = true
-  local
 
   storage_image_reference {
     publisher = "MicrosoftWindowsServer"
